@@ -1,5 +1,5 @@
 Andrew Steinmetz <arsteinm>
-Anup Chagam <asuriteid>
+Anup Chagam <achagam>
 
 SER 421 Fall 2016 B 
 Lab 5
