@@ -100,8 +100,29 @@ function getHottestCity(){
 }
 
 function getNicestCity(){
-	var city;
+	var city;		//nicest city to be returned
+	var bestScore = 0;	//best score out of all cities
+
+	//nicest city ideal variables to be calculated
+	var idealTemp = 75;
+	var idealWind=10; 
+	var idealHumidity= 50;
 	
+	var score = [0, 0, 0];	//score for each city
+
+	//iterate through to calculate score
+	for (var i =0; i < weather.length; i++){
+		score[i] += Math.abs(weather[i].current.temp_f - idealTemp);
+		score[i] += Math.abs(weather[i].current.wind_mph - idealWind);
+		score[i] += Math.abs(weather[i].current.humidity - idealHumidity);
+	}
+
+	//iterate to find the best score
+	for (var j = 0; j < score.length; j++){
+		if (bestScore < score[j]){
+			city = weather[j].location.name;
+		}
+	}
 
 	return city;
 }
