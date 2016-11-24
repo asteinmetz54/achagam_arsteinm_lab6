@@ -329,7 +329,9 @@ function forecast(resultRegion) {
 }
 
 
-function dropdown(city) {
+function dropdown() {
+	var city = document.getElementById("selectCity").value;
+
 	if (city == "paris") {
 		document.getElementById("41").innerHTML = "Paris";
 		currentAddress = parisAddress;
@@ -350,7 +352,7 @@ function dropdown(city) {
 		currentAddress = honoluluAddress;
 		currentForecast = honoluluForecast;
 	}
-	else {
+	else if(city == "sanfransisco"){
 		document.getElementById("41").innerHTML = "San Fransisco";
 		currentAddress = sanfransiscoAddress;
 		currentForecast = sanfransiscoForecast;
