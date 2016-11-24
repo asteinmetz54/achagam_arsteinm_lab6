@@ -10,7 +10,6 @@ Features:
 …
 
 Known Issues:
--Program was tested using FireFox, and only works in that browser
--difficult to test extra credit part one as function is reliant on API updating temp, feels like temp, and humidity to different values for comparison
+-difficult to test extra credit part one, as function is reliant on API updating temp, feels like temp, and humidity to different values for comparison
  added a couple screenshots from testing
 
