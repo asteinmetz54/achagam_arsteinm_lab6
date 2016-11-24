@@ -254,13 +254,16 @@ function showForecastText(request, row) {
 		var content = JSON.parse(request.responseText);
 		var dayIndexNumber = -1;
 		var nightIndexNumber = -1;
+		var daySet = false;
 
 		for (var i in content.forecast.forecastday[0].hour) {
 			if (dayIndexNumber == -1 || nightIndexNumber == -1) {
-				if (content.forecast.forecastday[0].hour[i].is_day == 0)
+				if ((content.forecast.forecastday[0].hour[i].is_day == 0) && (i > 12))
 					nightIndexNumber = i;
-				if (content.forecast.forecastday[0].hour[i].is_day == 1)
+				if ((content.forecast.forecastday[0].hour[i].is_day == 1) && !daySet){
 					dayIndexNumber = i;
+					daySet = true;
+				}
 			}
 		}
 
