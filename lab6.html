@@ -8,6 +8,8 @@
 <body>
 <div align="center">
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.4/Chart.min.js"></script>
+
 <table border="5">
   <tr><th class="title" id="title1">The average temperature is AAA and the hottest city is TTT</th></tr>
   <tr><th class="title" id="title2">The city with the nicest weather is XXX</th></tr>
@@ -18,7 +20,7 @@
 <table border="1">
 	<tr>
 	<td id = "11">City Name</td>
-	<td></td>
+	<td>Forecast</td>
 	<td id = "12">Last Updated Time</td>
 	<td id = "13">Temperature (F)</td>
 	<td id = "14">Feels Like (F)</td>
@@ -72,5 +74,7 @@
 
 <p id = "forecastSummaryDay"></p>
 <p id = "forecastSummaryNight"></p>
+
+<canvas id="myChart" ></canvas>
 
 </div></body></html>

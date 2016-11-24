@@ -16,6 +16,7 @@ sanfransiscoForecast = "http://api.apixu.com/v1/forecast.json?key=0097897ebbcd45
 currentAddress = "http://api.apixu.com/v1/current.json?key=0097897ebbcd4590a0043811162011&q=Paris";
 currentForecast = "http://api.apixu.com/v1/forecast.json?key=0097897ebbcd4590a0043811162011&q=Paris&days=1";
 var weather = [];
+var pastWeather = [];
 
 function getRequestObject() {
 	if (window.XMLHttpRequest) {
@@ -40,29 +41,122 @@ function ajaxResult(address, row) {
 function showResponseText(request, row) {
 	if ((request.readyState == 4) && (request.status == 200)) {
 		var content = JSON.parse(request.responseText);
+		
 		document.getElementById(row + "2").innerHTML = content.current.last_updated;
 		document.getElementById(row + "3").innerHTML = content.current.temp_f;
 		document.getElementById(row + "4").innerHTML = content.current.feelslike_f;
 		document.getElementById(row + "5").innerHTML = content.current.humidity;
 		document.getElementById(row + "6").innerHTML = content.current.wind_mph;
 		document.getElementById(row + "7").innerHTML = content.current.condition.text;
-		if (weather.length == 3) {
-			var index = 0;
-			if ((weather[0].location.name == "Phoenix" && weather[1].location.name == "Tokyo") || (weather[1].location.name == "Phoenix" && weather[0].location.name == "Tokyo")) {
-				index = 2;
-			} else if ((weather[0].location.name == "Phoenix" && weather[2].location.name == "Tokyo") || (weather[2].location.name == "Phoenix" && weather[0].location.name == "Tokyo")) {
-				index = 1;
-			}
-			weather[index] = content;
-		} else {
-			weather.push(content);
+		
+		document.getElementById(row + "2").style.color = "black";
+		document.getElementById(row + "3").style.color = "black";
+		document.getElementById(row + "4").style.color = "black";
+		document.getElementById(row + "5").style.color = "black";
+		document.getElementById(row + "6").style.color = "black";
+		document.getElementById(row + "7").style.color = "black";
+		
+		/*
+		if(weather.length > 2){
+				console.log("weather: " + weather[2].location.name + " content: " + content.location.name);
+				
+				weather[2].current.temp_f = 0;
+				weather[2].current.feelslike_f = 0;
+				weather[2].current.humidity = 0;
+				weather[2].current.wind_mph = 0;
 		}
-		if (weather.length > 0) {
+		*/
+		
+		for(var i = 0; i < weather.length; i++){
+			var j = i + 2;
+			
+			if(weather[i].location.name == content.location.name){
+				
+				var timeDifference = (Date.parse(content.current.last_updated) - Date.parse(weather[i].current.last_updated))/1000;
+
+				if(timeDifference > 0)
+					document.getElementById(j + "2").innerHTML = content.current.last_updated + " (+" + timeDifference + "s)";
+				else if(timeDifference < 0)
+					document.getElementById(j + "2").innerHTML = content.current.last_updated + " (-" + timeDifference + "s)";
+			
+				if (parseFloat(weather[i].current.temp_f) > parseFloat(content.current.temp_f))
+					document.getElementById(j + "3").style.color = "blue";
+				else if (parseFloat(weather[i].current.temp_f) < parseFloat(content.current.temp_f))
+					document.getElementById(j + "3").style.color = "red";
+				else
+					document.getElementById(j + "3").style.color = "black";
+
+				if (parseFloat(weather[i].current.feelslike_f) > parseFloat(content.current.feelslike_f))
+					document.getElementById(j + "4").style.color = "blue";
+				else if (parseFloat(weather[i].current.feelslike_f) < parseFloat(content.current.feelslike_f))
+					document.getElementById(j + "4").style.color = "red";
+				else
+					document.getElementById(j + "4").style.color = "black";
+
+				if (parseInt(weather[i].current.humidity) > parseInt(content.current.humidity))
+					document.getElementById(j + "5").style.color = "blue";
+				else if (parseInt(weather[i].current.humidity) < parseInt(content.current.humidity))
+					document.getElementById(j + "5").style.color = "red";
+				else
+					document.getElementById(j + "5").style.color = "black";
+
+				if (parseFloat(weather[i].current.wind_mph) > parseFloat(content.current.wind_mph))
+					document.getElementById(j + "6").style.color = "blue";
+				else if (parseFloat(weather[i].current.wind_mph) < parseFloat(content.current.wind_mph))
+					document.getElementById(j + "6").style.color = "red";
+				else
+					document.getElementById(j + "6").style.color = "black";
+			}
+		}
+		
+		if (weather.length == 3) {
+			var sameLocation = false;
+			
+			for(var i = 0; i < weather.length; i++){
+				if(weather[i].location.name == content.location.name){
+					weather[i] = content;
+					sameLocation = true;
+				}
+			}
+			
+			// if this is a new location, make sure we save its content
+			if(sameLocation == false){
+				weather[2] = content;
+			}
+		}
+		
+		else
+			weather.push(content);
+		
+		resetWeatherIndex();
+			
+		if (weather.length > 0){
 			var hottestCity = getHottestCity();
 			var nicestCity = getNicestCity();
 			document.getElementById("title1").innerHTML = "The average temperature is " + getAverageTemperature() + " and the hottest city is " + hottestCity;
 			document.getElementById("title2").innerHTML = "The city with the nicest weather is " + nicestCity;
 		}
+	}
+}
+
+function resetWeatherIndex(){
+	var PhoenixContent = "";
+	var TokyoContent = "";
+	var OtherContent = "";
+	
+	if(weather.length == 3){
+		for(var i = 0; i < weather.length; i++){
+			if(weather[i].location.name == "Phoenix")
+				PhoenixContent = weather[i];
+			else if(weather[i].location.name == "Tokyo")
+				TokyoContent = weather[i];
+			else
+				OtherContent = weather[i];
+		}
+		
+		weather[0] = PhoenixContent;
+		weather[1] = TokyoContent;
+		weather[2] = OtherContent;
 	}
 }
 
@@ -101,28 +195,36 @@ function getHottestCity() {
 
 function getNicestCity() {
 	var city;		//nicest city to be returned
-	var bestScore = 0;	//best score out of all cities
+	var bestScore = 10000;	//best score out of all cities
 
 	//nicest city ideal variables to be calculated
-	var idealTemp = 75.0;
+	var idealTemp = 70.0;
+	var idealFeelsLike = 70.0;
 	var idealWind = 10.0;
-	var idealHumidity = 50;
+	var idealHumidity = 20;
 
 	var score = [0, 0, 0];	//score for each city
 
 	//iterate through to calculate score
 	for (var i = 0; i < weather.length; i++) {
-		score[i] += Math.abs(weather[i].current.temp_f - idealTemp);
-		score[i] += Math.abs(weather[i].current.wind_mph - idealWind);
-		score[i] += Math.abs(weather[i].current.humidity - idealHumidity);
+		score[i] += Math.abs(((weather[i].current.temp_f - idealTemp)/idealTemp)*10);
+		score[i] += Math.abs(((weather[i].current.feelslike_f - idealFeelsLike)/idealFeelsLike)*10);
+		score[i] += Math.abs(((weather[i].current.wind_mph - idealWind)/idealWind)*10);
+		score[i] += Math.abs(((weather[i].current.humidity - idealHumidity)/idealHumidity)*10);
 	}
 
 	//iterate to find the best score
-	for (var j = 0; j < score.length; j++) {
-		if (bestScore < score[j]) {
-			city = weather[j].location.name;
+	// ideal city is the one with the lowest score
+	if (weather.length == 3) {
+		for (var j = 0; j < score.length; j++) {
+			if (bestScore > score[j]) {
+				bestScore = score[j];
+				city = weather[j].location.name;
+			}
 		}
 	}
+	else
+		city = "";
 
 	return city;
 }
@@ -213,63 +315,16 @@ function showForecastText(request, row) {
 			document.getElementById("forecastSummaryNight").innerHTML += "  It isn't very cloudy tonight.";
 		else
 			document.getElementById("forecastSummaryNight").innerHTML += "  It is very cloudy tonight.";
+		
+		// draw the forecast chart as well
+		drawChart(content.forecast.forecastday[0].hour);
 	}
 }
 
 function forecast(resultRegion) {
 	ajaxForecastResult(resultRegion);
 }
-/*
-function refresh() {
-	ajaxResult(phoenixAddress, 2);
-	ajaxResult(tokyoAddress, 3);
-	ajaxResult(currentAddress, 4);
-	if (weather.length > 0) {
-		var hottestCity = getHottestCity();
-		var nicestCity = getNicestCity();
-		document.getElementById("title1").innerHTML = "The average temperature is " + getAverageTemperature() + " and the hottest city is " + hottestCity;
-		document.getElementById("title2").innerHTML = "The city with the nicest weather is " + nicestCity;
-		weather.length = 0;
-	}
-}*/
-function refresh() {
-	var pastWeather = weather.slice(0);
 
-	ajaxResult(phoenixAddress, 2);
-	ajaxResult(tokyoAddress, 3);
-	ajaxResult(currentAddress, 4);
-
-	if (weather.length > 0) {
-		var hottestCity = getHottestCity();
-		var nicestCity = getNicestCity();
-		document.getElementById("title1").innerHTML = "The average temperature is " + getAverageTemperature() + " and the hottest city is " + hottestCity;
-		document.getElementById("title2").innerHTML = "The city with the nicest weather is " + nicestCity;
-		weather.length = 0;
-	}
-
-	for (var i=0; i< pastWeather.length; i++) {
-		var j = i + 1;
-		if (parseFloat(pastWeather[i].current.temp_f) > parseFloat(weather[i].current.temp_f))
-			document.getElementById(j + "3").style.color = "blue";
-		else if (parseFloat(pastWeather[i].current.temp_f) < parseFloat(weather[i].current.temp_f))
-			document.getElementById(j + "3").style.color = "red";
-
-		if (parseFloat(pastWeather[i].current.feelslike_f) > parseFloat(weather[i].current.feelslike_f))
-			document.getElementById(j + "4").style.color = "blue";
-		else if (parseFloat(pastWeather[i].current.feelslike_f) < parseFloat(weather[i].current.feelslike_f))
-			document.getElementById(j + "4").style.color = "red";
-
-		if (parseInt(pastWeather[i].current.humidity) > parseInt(weather[i].current.humidity))
-			document.getElementById(j + "5").style.color = "blue";
-		else if (parseInt(pastWeather[i].current.humidity) < parseInt(weather[i].current.humidity))
-			document.getElementById(j + "5").style.color = "red";
-
-		if (parseFloat(pastWeather[i].current.wind_mph) > parseFloat(weather[i].current.wind_mph))
-			document.getElementById(j + "6").style.color = "blue";
-		else if (parseFloat(pastWeather[i].current.wind_mph) < parseFloat(weather[i].current.wind_mph))
-			document.getElementById(j + "6").style.color = "red";
-	}
-}
 
 function dropdown(city) {
 	if (city == "paris") {
@@ -299,6 +354,52 @@ function dropdown(city) {
 	}
 
 	ajaxResult(currentAddress, 4);
+}
+
+function drawChart(forecastHour) {
+	
+	var hours = [];
+	var temp = [];
+	
+	for (i=0; i<forecastHour.length; i++) {
+		temp[i] = forecastHour[i].temp_f;
+		var myDate = new Date(forecastHour[i].time);
+		hours[i] = myDate.getHours();
+	}
+	
+	var ctx = document.getElementById('myChart');
+	if (ctx != null)
+		var ctx = ctx.getContext('2d');
+	
+	if (ctx != null) {
+		var myChart = new Chart(ctx, {
+		  type: 'line',
+		  //height: 30,
+		  //width: 40,
+		  data: {
+			labels: hours,
+			datasets: [{
+			  label: 'forecast',
+			  data: temp,
+			  backgroundColor: "rgba(153,255,51,0.4)"
+			}]
+		  }
+		});
+	}
+}
+
+function refresh() {
+	ajaxResult(phoenixAddress, 2);
+	ajaxResult(tokyoAddress, 3);
+	ajaxResult(currentAddress, 4);
+	
+	if (weather.length > 0) {
+		var hottestCity = getHottestCity();
+		var nicestCity = getNicestCity();
+		document.getElementById("title1").innerHTML = "The average temperature is " + getAverageTemperature() + " and the hottest city is " + hottestCity;
+		document.getElementById("title2").innerHTML = "The city with the nicest weather is " + nicestCity;
+	}
+	
 }
 
 refresh();
