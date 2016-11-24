@@ -381,13 +381,13 @@ function drawChart(forecastHour) {
 			datasets:[
 				{
 					label: "Weather Forecast",
-					fill: true,
+					fill: false,
 					backgroundColor: "rgba(153,255,51,0.4)",
 					data: temp
 				}
 			]
 		};
-		
+
 		//create options object to bind all options for chart to
 		var options = {
 			responsive: false,
