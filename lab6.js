@@ -44,9 +44,9 @@ function showResponseText(request, row) {
 
 		document.getElementById(row + "2").innerHTML = content.current.last_updated;
 		document.getElementById(row + "3").innerHTML = content.current.temp_f + "&deg;F";
-		document.getElementById(row + "4").innerHTML = content.current.feelslike_f  + "&deg;F";
+		document.getElementById(row + "4").innerHTML = content.current.feelslike_f + "&deg;F";
 		document.getElementById(row + "5").innerHTML = content.current.humidity + "%";
-		document.getElementById(row + "6").innerHTML = content.current.wind_mph+ " mph";
+		document.getElementById(row + "6").innerHTML = content.current.wind_mph + " mph";
 		document.getElementById(row + "7").innerHTML = content.current.condition.text;
 
 		document.getElementById(row + "2").style.color = "black";
@@ -260,7 +260,7 @@ function showForecastText(request, row) {
 			if (dayIndexNumber == -1 || nightIndexNumber == -1) {
 				if ((content.forecast.forecastday[0].hour[i].is_day == 0) && (i > 12))
 					nightIndexNumber = i;
-				if ((content.forecast.forecastday[0].hour[i].is_day == 1) && !daySet){
+				if ((content.forecast.forecastday[0].hour[i].is_day == 1) && !daySet) {
 					dayIndexNumber = i;
 					daySet = true;
 				}
@@ -367,20 +367,28 @@ function drawChart(forecastHour) {
 	for (i = 0; i < forecastHour.length; i++) {
 		temp[i] = forecastHour[i].temp_f;
 		var myDate = new Date(forecastHour[i].time);
-		hours[i] = myDate.getHours();
+		if (i == 0){
+			hours[i] = "12a.m."
+		}else if (i < 12) {
+			hours[i] = myDate.getHours() + "a.m.";
+		}else if(i == 12){
+			hours[i] = "12p.m."
+		}else{
+			hours[i] = (myDate.getHours()-12) + "p.m."
+		}
 	}
 
 	var ctx = document.getElementById('myChart');
-	
+
 	if (ctx != null)
 		var ctx = ctx.getContext('2d');
 	if (ctx != null) {
 		//create data object to bind temp and hours to
 		var data = {
 			labels: hours,
-			datasets:[
+			datasets: [
 				{
-					label: "Weather Forecast",
+					label: "Temperature(Fahrenheit)",
 					fill: false,
 					backgroundColor: "rgba(153,255,51,0.4)",
 					data: temp
@@ -398,7 +406,7 @@ function drawChart(forecastHour) {
 			},
 			maintainAspectRatio: true,
 			legend: {
-				position: 'bottom'
+				position: 'top'
 			}
 		};
 
