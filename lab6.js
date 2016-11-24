@@ -371,23 +371,44 @@ function drawChart(forecastHour) {
 	}
 
 	var ctx = document.getElementById('myChart');
+	
 	if (ctx != null)
 		var ctx = ctx.getContext('2d');
-
 	if (ctx != null) {
+		//create data object to bind temp and hours to
+		var data = {
+			labels: hours,
+			datasets:[
+				{
+					label: "Weather Forecast",
+					fill: true,
+					backgroundColor: "rgba(153,255,51,0.4)",
+					data: temp
+				}
+			]
+		};
+		
+		//create options object to bind all options for chart to
+		var options = {
+			responsive: false,
+			padding: 50,
+			title: {
+				display: true,
+				text: 'Weather Forecast for Tomorrow'
+			},
+			maintainAspectRatio: true,
+			legend: {
+				position: 'bottom'
+			}
+		};
+
+		//create chart
 		var myChart = new Chart(ctx, {
 			type: 'line',
-			//height: 30,
-			//width: 40,
-			data: {
-				labels: hours,
-				datasets: [{
-					label: 'forecast',
-					data: temp,
-					backgroundColor: "rgba(153,255,51,0.4)"
-				}]
-			}
-		});
+			data: data,
+			options: options
+
+		})
 	}
 }
 

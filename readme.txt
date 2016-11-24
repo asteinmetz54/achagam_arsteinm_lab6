@@ -11,9 +11,9 @@ Features:
 
 Known Issues:
 -Program was tested using FireFox, and only works in that browser
+-difficult to test extra credit part one as function is reliant on API updating temp, feels like temp, and humidity to different values for comparison
+ added a couple screenshots from testing
 
 Other:
--When refreshed, the timestamp sometimes doesn't change while the rest of the values do.  This is a quirk of
-the source JSON object (using the API viewer shows the same result), not an issue with the code.
 -Program refreshes the values instantly for the top column.  The refresh method still refreshes this as well.
 -Graph for the second extra credit is large, but a given size was not specified.
